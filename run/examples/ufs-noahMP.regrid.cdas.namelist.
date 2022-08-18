@@ -1,0 +1,83 @@
+&run_setup
+
+  static_file      = "/scratch2/NCEPDEV/land/Michael.Barlage/forcing/C384/vector/ufs-land_C384_static_fields.nc" !path to the static file
+  init_file        = "/scratch2/NCEPDEV/land/Michael.Barlage/forcing/C384/vector/ufs-land_C384_init_fields_1hr.nc" !path to the initial file
+  forcing_dir      = "/scratch2/NCEPDEV/land/Michael.Barlage/forcing/datasets/cdas/forcing" !path to the forcing files (here is cdas forcing)
+
+  separate_output = .true.  !an option for saving produced output files
+  output_dir       = "./noahmp_output/" !path for saving the output files
+
+  restart_frequency_s = 10800 !time step to produce restart file 
+  restart_simulation  = .true. !an option to run the driver using restart file
+  restart_date        = "XXYYYY-XXMM-XXDD XXHH:00:00" !the date of the restart file that is using to run the driver
+  restart_dir         = "./restarts/vector/" !path to the restart file
+
+  timestep_seconds = 3600 !time steps of running the driver based on seconds
+
+! simulation_start is required
+! either set simulation_end or run_* or run_timesteps, priority
+!   1. simulation_end 2. run_[days/hours/minutes/seconds] 3. run_timesteps
+
+  simulation_start = "2011-01-01 00:00:00"   ! start date [yyyy-mm-dd hh:mm:ss] simulation start can be used instead of using restart simulations
+!  simulation_end   = "2011-03-01 00:00:00"   !   end date [yyyy-mm-dd hh:mm:ss] !if running using simulation start we can eighther set simulation end date or below run time
+
+  run_days         = 3   ! number of days to run, can set this instead of simulation_end
+  run_hours        = 0   ! number of hours to run
+  run_minutes      = 0   ! number of minutes to run
+  run_seconds      = 0   ! number of seconds to run
+  
+  run_timesteps    = 0   ! number of timesteps to run
+
+  location_start   = 1 !location of the vector to start
+  location_end     = 272696 !location of the vector to end
+  
+/
+
+&land_model_option
+ land_model        = 2   ! choose land model: 1=noah, 2=noahmp
+/
+
+&structure
+ num_soil_levels   = 4     ! number of soil levels
+ forcing_height    = 10     ! forcing height [m]
+/
+
+&soil_setup
+ soil_level_thickness   =  0.10,    0.30,    0.60,    1.00      ! soil level thicknesses [m]
+ soil_level_nodes       =  0.05,    0.25,    0.70,    1.50      ! soil level centroids from surface [m]
+/
+
+&noahmp_options
+ dynamic_vegetation_option         = 4 ! options for dynamic vegetation
+ canopy_stomatal_resistance_option = 2 ! options for canopy stomatal resistance
+ soil_wetness_option               = 1 ! options for soil moisture factor for stomatal resistance
+ runoff_option                     = 1 ! options for runoff and groundwater
+ surface_exchange_option           = 3 ! options for surface layer drag coeff (ch & cm)
+ supercooled_soilwater_option      = 1 ! options for supercooled liquid water (or ice fraction)
+ frozen_soil_adjust_option         = 1 ! options for frozen soil permeability
+ radiative_transfer_option         = 3 ! options for radiation transfer
+ snow_albedo_option                = 2 ! options for ground snow surface albedo
+ precip_partition_option           = 1 ! options for partitioning precipitation into rainfall & snowfall
+ soil_temp_lower_bdy_option        = 2 ! options for lower boundary condition of soil temperature
+ soil_temp_time_scheme_option      = 3 ! options for snow/soil temperature time scheme (only layer 1)
+ thermal_roughness_scheme_option   = 2 ! options for thermal roughness scheme
+ surface_evap_resistance_option    = 1 ! options for surface resistent to evaporation/sublimation
+ glacier_option                    = 1 ! option for glacier treatment
+/
+
+&forcing
+ forcing_timestep_seconds       = 3600 ! timestep [s] between forcing file
+ forcing_regrid                 = "esmf" ! forcing regrid options
+ forcing_regrid_weights_filename= " " ! path to the forcing regrid weight file
+ forcing_type                   = "dd_1h" ! type of forcing that will be use to run the land driver
+ forcing_filename               = "CDAS_forcing_" ! name of the forcing file
+ forcing_interp_solar           = "linear"        ! zenith or linear 
+ forcing_time_solar             = "instantaneous" ! period_average or instantaneous
+ forcing_name_precipitation     = "precipitation" ! forcing precipitation [mm/s]
+ forcing_name_temperature       = "temperature"   ! forcing air temperature [K]
+ forcing_name_specific_humidity = "specific_humidity" ! forcing specific humidity [kg/kg]
+ forcing_name_wind_speed        = "wind_speed" ! forcing wind speed [m/s]
+ forcing_name_pressure          = "surface_pressure" ! forcing air pressure [Pa]
+ forcing_name_sw_radiation      = "solar_radiation" ! forcing downward shortwave radiation [W/m2]
+ forcing_name_lw_radiation      = "longwave_radiation" ! forcing downward longwave radiation [W/m2]
+/
