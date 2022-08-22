@@ -1,16 +1,16 @@
 &run_setup
 
-  static_file      = "/scratch2/NCEPDEV/land/Michael.Barlage/forcing/C384/vector/ufs-land_C384_static_fields.nc" ! path to the static file
-  init_file        = "/scratch2/NCEPDEV/land/Michael.Barlage/forcing/C384/vector/ufs-land_C384_init_fields_1hr.nc" ! path to the initial file
-  forcing_dir      = "/scratch2/NCEPDEV/land/Michael.Barlage/forcing/datasets/cdas/forcing" ! path to the forcing files (here is cdas forcing)
+  static_file      = " " ! path to the static file
+  init_file        = " " ! path to the initial file
+  forcing_dir      = " " ! path to the forcing files
 
   separate_output = .true.  ! option for saving output files
-  output_dir       = "./noahmp_output/" ! path for saving the output files
+  output_dir       = " " ! path for saving the output files
 
-  restart_frequency_s = 10800 ! time step to produce restart file 
+  restart_frequency_s = 10800 ! time step (s) to produce restart file
   restart_simulation  = .true. ! option to run the driver using restart file
   restart_date        = "XXYYYY-XXMM-XXDD XXHH:00:00" ! date of the restart file that is using to run the driver
-  restart_dir         = "./restarts/vector/" ! path to the restart file
+  restart_dir         = " " ! path to the restart file
 
   timestep_seconds = 3600 !time steps of running the driver based on seconds
 
