@@ -1,18 +1,19 @@
 &run_setup
 
-  static_file      = "/scratch1/NCEPDEV/stmp2/Michael.Barlage/forcing/gswp3/C96/static/ufs-land_C96_static_fields.nc"  !path to the static file
-  init_file        = "/scratch1/NCEPDEV/stmp2/Michael.Barlage/forcing/gswp3/C96/init/ufs-land_C96_init_fields_1hr.nc"  !path to the initial file
-  forcing_dir      = "/scratch1/NCEPDEV/stmp2/Michael.Barlage/forcing/gswp3/C96/uncompress"   !path to the forcing files (here is gswp3 forcing)
-  
-  separate_output = .true. !option for saving output files
-  output_dir       = "./restart"  !path for saving the output files
 
-  restart_frequency_s = 86400 ! time step (seconds) to produce restart file 
-  restart_simulation  = .true. ! option to run the model using restart file
-  restart_date        = "2000-01-01 23:00:00" ! date of the restart file that is using to run the model
-  restart_dir         = "./restart" ! path to the restart file
+  static_file      = " " ! path to the static file
+  init_file        = " " ! path to the initial file
+  forcing_dir      = " " ! path to the forcing files
 
-  timestep_seconds = 3600 ! time steps of running the model based on seconds
+  separate_output = .true.  ! option for saving output files
+  output_dir       = " " ! path for saving the output files
+
+  restart_frequency_s = 10800 ! time step (s) to produce restart file
+  restart_simulation  = .true. ! option to run the driver using restart file
+  restart_date        = "XXYYYY-XXMM-XXDD XXHH:00:00" ! date of the restart file that is using to run the driver
+  restart_dir         = " " ! path to the restart file
+
+  timestep_seconds = 3600 !time steps of running the driver based on seconds
 
 ! simulation_start is required
 ! either set simulation_end or run_* or run_timesteps, priority
@@ -21,15 +22,15 @@
   simulation_start = "2000-01-01 00:00:00"   ! start date [yyyy-mm-dd hh:mm:ss] either set simulation_start to run the model using initial file (cold start run) or set the restart_date to run the restart simulation
 ! simulation_end   = "2000-01-02 00:00:00"   ! end date [yyyy-mm-dd hh:mm:ss] if running using simulation_start we can either set simulation_end or run_* or run_timesteps
 
-  run_days         = 1   ! number of days to run
+  run_days         = 3   ! number of days to run
   run_hours        = 0   ! number of hours to run
   run_minutes      = 0   ! number of minutes to run
   run_seconds      = 0   ! number of seconds to run
   
   run_timesteps    = 0   ! number of timesteps to run
-  
-  begloc           = 1 ! location of the vector to start
-  endloc           = 16196 ! location of the vector to end
+
+  location_start   = 1 ! location of the vector to start
+  location_end     = 272696 ! location of the vector to end
   
 /
 
@@ -49,23 +50,24 @@
 
 &noahmp_options
  dynamic_vegetation_option         = 4 ! options for dynamic vegetation
- canopy_stomatal_resistance_option = 1 ! options for canopy stomatal resistance
+ canopy_stomatal_resistance_option = 2 ! options for canopy stomatal resistance
  soil_wetness_option               = 1 ! options for soil moisture factor for stomatal resistance
  runoff_option                     = 1 ! options for runoff and groundwater
- surface_exchange_option           = 1 ! options for surface layer drag coeff (ch & cm)
+ surface_exchange_option           = 3 ! options for surface layer drag coeff (ch & cm)
  supercooled_soilwater_option      = 1 ! options for supercooled liquid water (or ice fraction)
  frozen_soil_adjust_option         = 1 ! options for frozen soil permeability
- radiative_transfer_option         = 3 ! options for radiation transfe
+ radiative_transfer_option         = 3 ! options for radiation transfer
  snow_albedo_option                = 2 ! options for ground snow surface albedo
  precip_partition_option           = 1 ! options for partitioning precipitation into rainfall & snowfall
  soil_temp_lower_bdy_option        = 2 ! options for lower boundary condition of soil temperature
  soil_temp_time_scheme_option      = 3 ! options for snow/soil temperature time scheme (only layer 1)
- surface_evap_resistance_option    = 1 ! options for thermal roughness scheme 
- glacier_option                    = 1 ! options for surface resistent to evaporation/sublimation
+ thermal_roughness_scheme_option   = 2 ! options for thermal roughness scheme
+ surface_evap_resistance_option    = 1 ! options for surface resistent to evaporation/sublimation
+ glacier_option                    = 1 ! option for glacier treatment
 /
 
 &forcing
- forcing_timestep_seconds       = 10800 ! timestep [s] between forcing file
+ forcing_timestep_seconds       =  3600 ! timestep [s] between forcing file
  forcing_type                   = "gswp3" ! type of forcing 
  forcing_filename               = "C96_GSWP3_forcing_" ! name of the forcing file
  forcing_interp_solar           = "gswp3_zenith"  ! gswp3_zenith or linear
