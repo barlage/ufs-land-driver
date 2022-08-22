@@ -4,31 +4,31 @@
   init_file        = "/scratch1/NCEPDEV/stmp2/Michael.Barlage/forcing/gswp3/C96/init/ufs-land_C96_init_fields_1hr.nc"  !path to the initial file
   forcing_dir      = "/scratch1/NCEPDEV/stmp2/Michael.Barlage/forcing/gswp3/C96/uncompress"   !path to the forcing files (here is gswp3 forcing)
   
-  separate_output = .true. !option for saving produced output files
+  separate_output = .true. !option for saving output files
   output_dir       = "./restart"  !path for saving the output files
 
   restart_frequency_s = 86400 ! time step (seconds) to produce restart file 
-  restart_simulation  = .true. ! option to run the driver using restart file
-  restart_date        = "2000-01-01 23:00:00" ! date of the restart file that is using to run the driver
+  restart_simulation  = .true. ! option to run the model using restart file
+  restart_date        = "2000-01-01 23:00:00" ! date of the restart file that is using to run the model
   restart_dir         = "./restart" ! path to the restart file
 
-  timestep_seconds = 3600 ! time steps of running the driver based on seconds
+  timestep_seconds = 3600 ! time steps of running the model based on seconds
 
 ! simulation_start is required
 ! either set simulation_end or run_* or run_timesteps, priority
 !   1. simulation_end 2. run_[days/hours/minutes/seconds] 3. run_timesteps
 
-  simulation_start = "2000-01-01 00:00:00"   ! start date [yyyy-mm-dd hh:mm:ss] simulation start can be used instead of using restart simulations
-! simulation_end   = "2000-01-02 00:00:00"   ! end date [yyyy-mm-dd hh:mm:ss] if running using simulation start we can eighther set simulation end date or below run time
+  simulation_start = "2000-01-01 00:00:00"   ! start date [yyyy-mm-dd hh:mm:ss] either set simulation_start to run the model using initial file (cold start run) or set the restart_date to run the restart simulation
+! simulation_end   = "2000-01-02 00:00:00"   ! end date [yyyy-mm-dd hh:mm:ss] if running using simulation_start we can either set simulation_end or run_* or run_timesteps
 
-  run_days         = 1   ! number of days to run, can set run parts instead of simulation_end
+  run_days         = 1   ! number of days to run
   run_hours        = 0   ! number of hours to run
   run_minutes      = 0   ! number of minutes to run
   run_seconds      = 0   ! number of seconds to run
   
   run_timesteps    = 0   ! number of timesteps to run
   
-  begloc           = 1 !location of the vector to start
+  begloc           = 1 ! location of the vector to start
   endloc           = 16196 ! location of the vector to end
   
 /
