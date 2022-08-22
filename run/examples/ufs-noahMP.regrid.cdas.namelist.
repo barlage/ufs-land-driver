@@ -4,7 +4,7 @@
   init_file        = "/scratch2/NCEPDEV/land/Michael.Barlage/forcing/C384/vector/ufs-land_C384_init_fields_1hr.nc" ! path to the initial file
   forcing_dir      = "/scratch2/NCEPDEV/land/Michael.Barlage/forcing/datasets/cdas/forcing" ! path to the forcing files (here is cdas forcing)
 
-  separate_output = .true.  ! option for saving produced output files
+  separate_output = .true.  ! option for saving output files
   output_dir       = "./noahmp_output/" ! path for saving the output files
 
   restart_frequency_s = 10800 ! time step to produce restart file 
@@ -18,10 +18,10 @@
 ! either set simulation_end or run_* or run_timesteps, priority
 !   1. simulation_end 2. run_[days/hours/minutes/seconds] 3. run_timesteps
 
-  simulation_start = "2011-01-01 00:00:00"   ! start date [yyyy-mm-dd hh:mm:ss] simulation start can be used instead of using restart simulations
-!  simulation_end   = "2011-03-01 00:00:00"   !   end date [yyyy-mm-dd hh:mm:ss] if running using simulation start we can eighther set simulation end date or below run time
+  simulation_start = "2011-01-01 00:00:00"   ! start date [yyyy-mm-dd hh:mm:ss] either set simulation_start to run the model using initial file (cold start run) or set the restart_date to run the restart simulation
+!  simulation_end   = "2011-03-01 00:00:00"   ! end date [yyyy-mm-dd hh:mm:ss] if running using simulation_start we can either set simulation_end or run_* or run_timesteps
 
-  run_days         = 3   ! number of days to run, can set run parts instead of simulation_end
+  run_days         = 3   ! number of days to run
   run_hours        = 0   ! number of hours to run
   run_minutes      = 0   ! number of minutes to run
   run_seconds      = 0   ! number of seconds to run
