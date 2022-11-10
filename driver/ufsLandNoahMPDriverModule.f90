@@ -231,7 +231,8 @@ associate (                                                      &
    flhc1      => noahmp%model%heat_flux_multiplier%data         ,&
    flqc1      => noahmp%model%moisture_flux_multiplier%data     ,&
    t2mmp      => noahmp%diag%temperature_2m%data                ,&
-   q2mp       => noahmp%diag%spec_humidity_2m%data               &
+   q2mp       => noahmp%diag%spec_humidity_2m%data              ,&
+   canopy_heat_storage_ccpp => noahmp%flux%canopy_heat_storage%data &
    )
 
 allocate(       rho(im))
@@ -349,7 +350,8 @@ time_loop : do timestep = 1, namelist%run_timesteps
             sncovr1, qsurf, gflux, drain, evap, hflx, ep, runoff,      &
             cmm, chh, evbs, evcw, sbsno, pah, ecan, etran, edir, snowc,&
             stm, snohf,smcwlt2, smcref2, wet1, t2mmp, q2mp,zvfun,      &
-            ztmax, errmsg, errflg)     
+            ztmax, errmsg, errflg,                                     &
+            canopy_heat_storage_ccpp)     
 
   rho = prsl1 / (con_rd*t1*(one+con_fvirt*q1)) 
   hflx = hflx * rho * con_cp
