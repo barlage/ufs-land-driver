@@ -302,13 +302,6 @@ allocate(     fm101(im))
 allocate(      fh21(im))
 allocate(     zvfun(im))
 
-! initialize some coupling related variables
-pblh   = 1000.0  ! arbitrary at 1000m
-rmol1  = 1.0
-flhc1  = 0.0
-flqc1  = 0.0
-ustar1 = 0.1
-
 dry        = .true.
   where(static%vegetation_category == static%iswater) dry = .false.
 flag_iter  = .true.
@@ -434,13 +427,15 @@ time_loop : do timestep = 1, namelist%run_timesteps
   
   where(dswsfc>0.0 .and. sfalb<0.0) dswsfc = 0.0
 
-  call output%WriteOutputNoahMP(namelist, noahmp, forcing, now_time)
+  if((namelist%output_frequency_s > 0 .and. mod(timestep,namelist%output_timesteps) == 0) .or. &
+     (namelist%output_frequency_s == -1 .and. now_date(12:19) ==    "00:00:00")           .or. &
+     (namelist%output_frequency_s == -2 .and. now_date( 9:19) == "01 00:00:00") )              &
+      call output%WriteOutputNoahMP(namelist, noahmp, forcing, now_time)
 
-  if(namelist%restart_timesteps > 0) then
-    if(mod(timestep,namelist%restart_timesteps) == 0) then
+  if((namelist%restart_frequency_s > 0 .and. mod(timestep,namelist%restart_timesteps) == 0) .or. &
+     (namelist%restart_frequency_s == -1 .and. now_date(12:19) ==    "00:00:00")            .or. &
+     (namelist%restart_frequency_s == -2 .and. now_date( 9:19) == "01 00:00:00") )               &
       call restart%WriteRestartNoahMP(namelist, noahmp, now_time)
-    end if
-  end if
 
   if(errflg /= 0) then
     write(*,*) "noahmpdrv_run reporting an error"
