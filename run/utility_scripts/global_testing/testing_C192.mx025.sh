@@ -4,13 +4,13 @@
 #SBATCH --partition=u1-service
 #
 # -- Request n cores
-#SBATCH --ntasks=1
+#SBATCH --ntasks=32
 #
 # -- Specify queue
 #SBATCH -q batch
 #
 # -- Specify a maximum wallclock
-#SBATCH --time=0:10:00
+#SBATCH --time=3:00:00
 #
 # -- Specify under which account a job should run
 #SBATCH --account=fv3-cpu
@@ -29,9 +29,9 @@ module load stack-intel-oneapi-mpi/2021.13
 module load netcdf-fortran/4.6.1 
 module load nco/5.2.4 
 
-testname="gfsv17_runoff3"
-description="gfsv17 configuration with runoff option = 3"
-compare_to="gfsv17_baseline"
+testname="gfsv17"
+description="gfsv17 configuration"
+compare_to="gfsv17"
 archive_path="/scratch4/NCEPDEV/land/data/global_testing/"
 noahmp_parameter_table="../../../ccpp-physics/physics/SFC_Models/Land/Noahmp/noahmptable.tbl"
 ccpp_code_directory="../../../ccpp-physics/physics/SFC_Models/Land/Noahmp"
@@ -42,7 +42,7 @@ ccpp_code_directory="../../../ccpp-physics/physics/SFC_Models/Land/Noahmp"
 dynamic_vegetation_option=4
 canopy_stomatal_resistance_option=2
 soil_wetness_option=1
-runoff_option=3
+runoff_option=1
 surface_exchange_option=1
 supercooled_soilwater_option=1
 frozen_soil_adjust_option=1
@@ -69,14 +69,14 @@ else
   mkdir -p $archive_directory
 fi
 
-#if [ -d $testname ]; then 
-#  echo "ERROR: run directory $testname already exists"
-#  echo "ERROR: overwriting is not allowed"
-#  exit 2
-#else
-#  echo "creating directory: "$testname
-#  mkdir -p $testname
-#fi
+if [ -d $testname ]; then 
+  echo "ERROR: run directory $testname already exists"
+  echo "ERROR: overwriting is not allowed"
+  exit 2
+else
+  echo "creating directory: "$testname
+  mkdir -p $testname
+fi
 
 
 ################################################################
@@ -138,7 +138,7 @@ cd $testname
 
 echo "Begin model run: $(date)"
 
-#time srun -n $SLURM_NTASKS ../../../ufsLand.exe
+time srun -n $SLURM_NTASKS ../../../ufsLand.exe
 
 echo "End model run: $(date)"
 
@@ -157,6 +157,8 @@ ncra ufs_land_monthly_mean.201[5-9]-10.nc ufs_land_monthly_mean.202[0-4]-10.nc  
 ncra ufs_land_monthly_mean.201[5-9]-11.nc ufs_land_monthly_mean.202[0-4]-11.nc  ufs_land_monthly_mean.2015-2024.11.nc
 ncra ufs_land_monthly_mean.201[5-9]-12.nc ufs_land_monthly_mean.202[0-4]-12.nc  ufs_land_monthly_mean.2015-2024.12.nc
 
+ncrcat ufs_land_monthly_mean.2024-0[4-9].nc ufs_land_monthly_mean.2024-1[0-2].nc ufs_land_monthly_mean.2025-??.nc ufs_land_monthly_mean.2026-0[1-2].nc ufs_land_monthly_mean.retro.nc
+
 echo "End nco commands: $(date)"
 
 ############
@@ -169,7 +171,10 @@ mkdir -p $archive_directory/climatology
 rsync -av ufs_land_monthly_mean.2015-2024.??.nc $archive_directory/climatology
 
 mkdir -p $archive_directory/monthly_mean
-#rsync -av ufs_land_monthly_mean.20??-??.nc $archive_directory/monthly_mean
+rsync -av ufs_land_monthly_mean.20??-??.nc $archive_directory/monthly_mean
+
+mkdir -p $archive_directory/retro
+rsync -av ufs_land_monthly_mean.retro.nc $archive_directory/retro
 
 cp ufs-land.namelist $archive_directory
 
