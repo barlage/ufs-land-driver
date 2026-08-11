@@ -4,20 +4,21 @@
 #SBATCH --partition=u1-service
 #
 # -- Request n cores
-#SBATCH --ntasks=32
+#SBATCH --ntasks=64
 #
 # -- Specify queue
 #SBATCH -q batch
 #
 # -- Specify a maximum wallclock
-#SBATCH --time=3:00:00
+#SBATCH --time=3:30:00
 #
 # -- Specify under which account a job should run
 #SBATCH --account=fv3-cpu
 #
 # -- Set the name of the job, or Slurm will default to the name of the script
 #SBATCH --job-name=UFS-Land
-#SBATCH -o ufs-land-global_testing.out
+#SBATCH -o ufs-land-global_testing.%j.out
+#SBATCH --open-mode=truncate
 #
 # -- Tell the batch system to set the working directory to the current working directory
 #SBATCH --chdir=.
@@ -157,6 +158,8 @@ ncra ufs_land_monthly_mean.201[5-9]-10.nc ufs_land_monthly_mean.202[0-4]-10.nc  
 ncra ufs_land_monthly_mean.201[5-9]-11.nc ufs_land_monthly_mean.202[0-4]-11.nc  ufs_land_monthly_mean.2015-2024.11.nc
 ncra ufs_land_monthly_mean.201[5-9]-12.nc ufs_land_monthly_mean.202[0-4]-12.nc  ufs_land_monthly_mean.2015-2024.12.nc
 
+ncrcat -h ufs_land_monthly_mean.2015-2024.??.nc ufs_land_monthly_mean.2015-2024.climo.nc
+
 ncrcat ufs_land_monthly_mean.2024-0[4-9].nc ufs_land_monthly_mean.2024-1[0-2].nc ufs_land_monthly_mean.2025-??.nc ufs_land_monthly_mean.2026-0[1-2].nc ufs_land_monthly_mean.retro.nc
 
 echo "End nco commands: $(date)"
@@ -169,12 +172,17 @@ echo "Start archive commands: $(date)"
 
 mkdir -p $archive_directory/climatology
 rsync -av ufs_land_monthly_mean.2015-2024.??.nc $archive_directory/climatology
+rsync -av ufs_land_monthly_mean.2015-2024.climo.nc $archive_directory/climatology
 
 mkdir -p $archive_directory/monthly_mean
 rsync -av ufs_land_monthly_mean.20??-??.nc $archive_directory/monthly_mean
 
 mkdir -p $archive_directory/retro
 rsync -av ufs_land_monthly_mean.retro.nc $archive_directory/retro
+
+mkdir -p $archive_directory/diurnal
+rsync -av ufs_land_diurnal.201[5-9]*.nc $archive_directory/diurnal
+rsync -av ufs_land_diurnal.202[0-4]*.nc $archive_directory/diurnal
 
 cp ufs-land.namelist $archive_directory
 
@@ -202,17 +210,34 @@ module load py-netcdf4/1.7.1.post2
 module load py-matplotlib/3.7.4
 module load python/3.11
 
-testname_file="${archive_directory}/climatology/ufs_land_monthly_mean.2015-2024.%MM.nc"
-compare_file="$archive_path/tests/${compare_to}/climatology/ufs_land_monthly_mean.2015-2024.%MM.nc"
+testname_file="${archive_directory}/climatology/ufs_land_monthly_mean.2015-2024.climo.nc"
+compare_file="$archive_path/tests/${compare_to}/climatology/ufs_land_monthly_mean.2015-2024.climo.nc"
 
 metric2plot="ToverET"
 
 python ../plot_scripts/cal_plot_metrics.py \
- --ifname $testname_file,$compare_file \
- --mask CONUS_West,CONUS_East,CONUS_Central,CONUS_South,CPlains,NPlains,SPlains,CONUS,Sahara \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
  --metrics $metric2plot \
  --model $testname,$compare_to \
- --ofname ${metric2plot}.${testname}-vs-${compare_to}.png
+ --figure_title "Transpiration % of ET in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Transpiration % of ET in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Transpiration % in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
 
 ############
 # Archive plots 
