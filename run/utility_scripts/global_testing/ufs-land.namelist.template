@@ -74,7 +74,7 @@
  forcing_type                   = "dd_1h"
  forcing_filename               = "ERA5-C192.mx025_datm_"
  forcing_interp_solar           = "zenith"          ! zenith or linear
- forcing_time_solar             = "period_average"  ! period_average or instantaneous
+ forcing_time_solar             = "instantaneous"   ! period_average or instantaneous
  forcing_name_precipitation     = "precipitation_bilinear"
  forcing_name_temperature       = "temperature"
  forcing_name_specific_humidity = "specific_humidity"
@@ -87,8 +87,10 @@
 &io
  output_names  = ""
  restart_names = ""
- diurnal_names = ""
+ diurnal_names = "temperature_radiative",
+                 "spec_humidity_surface"
  monthly_mean_names = "soil_moisture_vol",
+                      "temperature_soil",
                       "runoff_surface",
                       "runoff_baseflow",
                       "transpiration",
@@ -101,6 +103,9 @@
                       "downward_shortwave_forcing",
                       "sensible_heat_total",
                       "latent_heat_total",
-                      "ground_heat_total"
+                      "ground_heat_total",
+                      "snow_cover_fraction",
+                      "snow_water_equiv",
+                      "snow_depth"
 
 /
