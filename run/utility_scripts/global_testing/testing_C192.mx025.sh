@@ -105,7 +105,7 @@ echo "surface_evap_resistance_option = $surface_evap_resistance_option" >> confi
 echo "glacier_option = $glacier_option" >> configuration
 echo "tq_diagnostic_option = $tq_diagnostic_option" >> configuration
 
-cp configuration $archive_directory
+mv configuration $archive_directory
 
 ################################################################
 # start namelist generation
