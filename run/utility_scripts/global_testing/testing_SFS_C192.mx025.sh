@@ -10,7 +10,7 @@
 #SBATCH -q batch
 #
 # -- Specify a maximum wallclock
-#SBATCH --time=1:00:00
+#SBATCH --time=2:00:00
 #
 # -- Specify under which account a job should run
 #SBATCH --account=fv3-cpu
