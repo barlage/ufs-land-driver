@@ -1,0 +1,111 @@
+&run_setup
+
+  static_file      = "/scratch4/NCEPDEV/land/data/ufs-land-driver/vector_inputs/C192.mx025.freedrain/ufs-land_C192.mx025_static_fields.nc"
+  init_file        = "/scratch4/NCEPDEV/land/data/ufs-land-driver/cold_start/C192.mx025/ERA5-C192.mx025_cold_start_1979-12-31_23:00:00.nc"
+  forcing_dir      = "/scratch4/NCEPDEV/land/data/ufs-land-driver/datm/ERA5/C192.mx025/"
+  
+  separate_output = .true.
+  output_dir       = "./"
+  output_frequency_s = 0
+
+  restart_frequency_s = 0
+  restart_simulation  = .true.
+  restart_date        = "2000-01-01 00:00:00"
+  restart_dir         = "./"
+
+  timestep_seconds = 3600
+
+! simulation_start is required
+! either set simulation_end or run_* or run_timesteps, priority
+!   1. simulation_end 2. run_[days/hours/minutes/seconds] 3. run_timesteps
+
+  simulation_start = "1980-01-01 00:00:00"   ! start date [yyyy-mm-dd hh:mm:ss]
+  simulation_end   = "2026-03-01 00:00:00"   !   end date [yyyy-mm-dd hh:mm:ss]
+
+  run_days         = 1   ! number of days to run
+  run_hours        = 0   ! number of hours to run
+  run_minutes      = 0   ! number of minutes to run
+  run_seconds      = 0   ! number of seconds to run
+  
+  run_timesteps    = 0   ! number of timesteps to run
+  
+  location_start   = 1
+  location_end     = 70664
+  
+/
+
+&land_model_option
+ land_model        = 2   ! choose land model: 1=noah, 2=noahmp
+/
+
+&structure
+ num_soil_levels   = 4     ! number of soil levels
+ forcing_height    = 10    ! forcing height [m]
+/
+
+&soil_setup
+ soil_level_thickness   =  0.10,    0.30,    0.60,    1.00      ! soil level thicknesses [m]
+ soil_level_nodes       =  0.05,    0.25,    0.70,    1.50      ! soil level centroids from surface [m]
+/
+
+&noahmp_options
+ dynamic_vegetation_option         = <dynamic_vegetation_option>
+ canopy_stomatal_resistance_option = <canopy_stomatal_resistance_option>
+ soil_wetness_option               = <soil_wetness_option>
+ runoff_option                     = <runoff_option>
+ surface_exchange_option           = <surface_exchange_option>
+ supercooled_soilwater_option      = <supercooled_soilwater_option>
+ frozen_soil_adjust_option         = <frozen_soil_adjust_option>
+ radiative_transfer_option         = <radiative_transfer_option>
+ snow_albedo_option                = <snow_albedo_option>
+ precip_partition_option           = <precip_partition_option>
+ soil_temp_lower_bdy_option        = <soil_temp_lower_bdy_option>
+ soil_temp_time_scheme_option      = <soil_temp_time_scheme_option>
+ thermal_roughness_scheme_option   = <thermal_roughness_scheme_option>
+ surface_evap_resistance_option    = <surface_evap_resistance_option>
+ glacier_option                    = <glacier_option>
+ tq_diagnostic_option              = <tq_diagnostic_option>
+/
+
+&forcing
+ forcing_timestep_seconds       = 3600
+ forcing_regrid                 = "none"
+ forcing_regrid_weights_filename= ""
+ forcing_type                   = "dd_1h"
+ forcing_filename               = "ERA5-C192.mx025_datm_"
+ forcing_interp_solar           = "zenith"          ! zenith or linear
+ forcing_time_solar             = "instantaneous"   ! period_average or instantaneous
+ forcing_name_precipitation     = "precipitation_bilinear"
+ forcing_name_temperature       = "temperature"
+ forcing_name_specific_humidity = "specific_humidity"
+ forcing_name_wind_speed        = "wind_speed"
+ forcing_name_pressure          = "surface_pressure"
+ forcing_name_sw_radiation      = "solar_radiation"
+ forcing_name_lw_radiation      = "longwave_radiation"
+/
+
+&io
+ output_names  = ""
+ restart_names = ""
+ diurnal_names = "temperature_radiative",
+                 "spec_humidity_surface"
+ monthly_mean_names = "soil_moisture_vol",
+                      "temperature_soil",
+                      "runoff_surface",
+                      "runoff_baseflow",
+                      "transpiration",
+                      "evaporation_soil",
+                      "evaporation_canopy",
+                      "precipitation_forcing",
+                      "sw_reflected_total",
+                      “lw_absorbed_total”,
+                      "downward_longwave_forcing",
+                      "downward_shortwave_forcing",
+                      "sensible_heat_total",
+                      "latent_heat_total",
+                      "ground_heat_total",
+                      "snow_cover_fraction",
+                      "snow_water_equiv",
+                      "snow_depth"
+
+/
