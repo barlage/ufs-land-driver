@@ -1,3 +1,4 @@
 [submodule "ccpp-physics"]
 	path = ccpp-physics
-	url = https://github.com/ufs-community/ccpp-physics
+	url = https://github.com/barlage/ccpp-physics
+	branch = noahmp_submodule
