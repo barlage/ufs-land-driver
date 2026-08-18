@@ -1,6 +1,6 @@
 &run_setup
 
-  static_file      = "/scratch4/NCEPDEV/land/data/ufs-land-driver/vector_inputs/C192.mx025.freedrain/ufs-land_C192.mx025_static_fields.nc"
+  static_file      = "/scratch4/NCEPDEV/land/data/ufs-land-driver/vector_inputs/C192.mx025.soilgrids/ufs-land_C192.mx025_static_fields.nc"
   init_file        = "/scratch4/NCEPDEV/land/data/ufs-land-driver/cold_start/C192.mx025/ERA5-C192.mx025_cold_start_1979-12-31_23:00:00.nc"
   forcing_dir      = "/scratch4/NCEPDEV/land/data/ufs-land-driver/datm/ERA5/C192.mx025/"
   
