@@ -30,9 +30,9 @@ module load stack-intel-oneapi-mpi/2021.13
 module load netcdf-fortran/4.6.1 
 module load nco/5.2.4 
 
-testname="SFSland_v1.0"
-description="updates to soil type, drainage and czil"
-compare_to="gfsv17"
+testname="SFSland_v1.1"
+description="SFSland_v1.0 plus linear rhsur and theta1 rsurf"
+compare_to="SFSland_v1.0"
 archive_path="/scratch4/NCEPDEV/land/data/global_testing/"
 noahmp_parameter_table="../../../ccpp-physics/physics/SFC_Models/Land/Noahmp/noahmptable.tbl"
 ccpp_code_directory="../../../ccpp-physics/physics/SFC_Models/Land/Noahmp"
@@ -238,6 +238,240 @@ python ../plot_scripts/cal_plot_metrics.py \
  --metrics $metric2plot \
  --model $testname,$compare_to \
  --figure_title "Transpiration % in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
+
+metric2plot="soil_evaporation_era5land"
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Soil Evaporation in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Soil Evaporation in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Soil Evaporation in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
+
+metric2plot="canopy_evaporation_era5land"
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Canopy Evaporation in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Canopy Evaporation in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Canopy Evaporation in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
+
+metric2plot="transpiration_era5land"
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Transpiration in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Transpiration in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Transpiration in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
+
+metric2plot="soil_moisture_level1_era5land"
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 1 Soil Moisture in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 1 Soil Moisture in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 1 Soil Moisture in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
+
+metric2plot="soil_moisture_level2_era5land"
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 2 Soil Moisture in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 2 Soil Moisture in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 2 Soil Moisture in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
+
+metric2plot="soil_moisture_level3_era5land"
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 3 Soil Moisture in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 3 Soil Moisture in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 3 Soil Moisture in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
+
+metric2plot="soil_moisture_level4_era5land"
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 4 Soil Moisture in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 4 Soil Moisture in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Level 4 Soil Moisture in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
+
+metric2plot="latent_heat_flux_era5land"
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Latent Heat Flux in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Latent Heat Flux in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Latent Heat Flux in Major River Basins" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
+
+metric2plot="sensible_heat_flux_era5land"
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask PacificNW,PacificSW,Southwest,NRockies,SRockies,GreatBasin,NPlains,CPlains,SPlains \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Sensible Heat Flux in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky1.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Prairie,GreatLakes,Appalachia,DeepSouth,Southeast,MidAtlantic,NorthAtlantic,SAK,NAK \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Sensible Heat Flux in US regions" \
+ --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.bukovsky2.png
+
+python ../plot_scripts/cal_plot_metrics.py \
+ --input_file_name $testname_file,$compare_file \
+ --mask Amazon,Yangtze,Congo,Mississippi,Danube,Nile,Murray,Lena,Yukon \
+ --metrics $metric2plot \
+ --model $testname,$compare_to \
+ --figure_title "Sensible Heat Flux in Major River Basins" \
  --output_file_name ${metric2plot}.${testname}-vs-${compare_to}.basins.png
 
 ############

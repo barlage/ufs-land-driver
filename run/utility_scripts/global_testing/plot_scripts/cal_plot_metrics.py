@@ -58,6 +58,28 @@ def calculate_metrics(input_file_name, metrics, mask, average_option, model):
     models += ["GLEAM4.2a"]
     models += ["GLEAM4.2b"]
 
+# latent_heat_flux_era5land: Latent Heat Flux Compared to ERA5-Land (monthly mean climatology 2015-2024)
+# sensible_heat_flux_era5land: Sensible Heat Flux Compared to ERA5-Land (monthly mean climatology 2015-2024)
+# soil_moisture_level1_era5land: Level 1 Soil Moisture Compared to ERA5-Land (monthly mean climatology 2015-2024)
+# soil_moisture_level2_era5land: Level 2 Soil Moisture Compared to ERA5-Land (monthly mean climatology 2015-2024)
+# soil_moisture_level3_era5land: Level 3 Soil Moisture Compared to ERA5-Land (monthly mean climatology 2015-2024)
+# soil_moisture_level4_era5land: Level 4 Soil Moisture Compared to ERA5-Land (monthly mean climatology 2015-2024)
+# soil_evaporation_era5land: Soil Evaporation Compared to ERA5-Land (monthly mean climatology 2015-2024)
+# canopy_evaporation_era5land: Canopy Evaporation Compared to ERA5-Land (monthly mean climatology 2015-2024)
+# transpiration_era5land: Transpiration Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif (metrics == 'latent_heat_flux_era5land'     or
+        metrics == 'sensible_heat_flux_era5land'   or
+        metrics == 'soil_moisture_level1_era5land' or
+        metrics == 'soil_moisture_level2_era5land' or
+        metrics == 'soil_moisture_level3_era5land' or
+        metrics == 'soil_moisture_level4_era5land' or
+        metrics == 'soil_evaporation_era5land'     or
+        metrics == 'canopy_evaporation_era5land'   or
+        metrics == 'transpiration_era5land' ):
+    input_file_names += ["/scratch4/NCEPDEV/land/data/evaluation/ERA5_Land/MonthlyAverage/C192.mx025/ERA5LAND.climatology.C192.mx025.nc"]
+    models += ["era5land"]
+
 # soil_temperature_level1_gfsref: Level 1 Soil Temperature Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
 
   elif metrics == 'soil_temperature_level1_gfsref':
@@ -204,6 +226,8 @@ def calculate_metrics(input_file_name, metrics, mask, average_option, model):
 
 def read_cal_metrics(model_name, data_file_name, mask_file_name, masks, metrics, average_option, process_time):
 
+  days_in_month = np.array([31,28,31,30,31,30,31,31,30,31,30,31])
+
   # open the data file and the mask file
   src_data = nc.Dataset(data_file_name, "r")
   if mask_file_name == None:
@@ -216,19 +240,33 @@ def read_cal_metrics(model_name, data_file_name, mask_file_name, masks, metrics,
   #   var_numerator  : has length of the full location vector
   #   var_denominator: has length of the full location vector
 
+# BFI: baseflow index (monthly mean climatology 2015-2024)
+
   if metrics.upper() == 'BFI':
     var_denominator = src_data.variables['runoff_baseflow'][process_time] + src_data.variables['runoff_surface'][process_time]
     var_numerator   = src_data.variables['runoff_baseflow'][process_time]
+
+# ALBEDO:  (monthly mean climatology 2015-2024)
+
   elif metrics.upper() == 'ALBEDO':
     var_numerator   = src_data.variables['sw_reflected_total'][process_time]
     var_denominator = src_data.variables['downward_shortwave_forcing'][process_time]
+
+# ETOVERP: Total ET / Precipitation (monthly mean climatology 2015-2024)
+
   elif metrics.upper() == 'ETOVERP':
     var_numerator   = src_data.variables['transpiration'][process_time] + src_data.variables['evaporation_canopy'][process_time]
     var_numerator  += src_data.variables['evaporation_soil'][process_time]
     var_denominator = src_data.variables['precipitation_forcing'][process_time]
+
+# ROVERP: Total Runoff / Precipitation (monthly mean climatology 2015-2024)
+
   elif metrics.upper() == 'ROVERP':
     var_numerator   = src_data.variables['runoff_surface'][process_time] + src_data.variables['runoff_baseflow'][process_time]
     var_denominator = src_data.variables['precipitation_forcing'][process_time]
+
+# TOVERET: Transpiration / Total ET (monthly mean climatology 2015-2024)
+
   elif metrics.upper() == 'TOVERET':
     if 'GLEAM' in model_name.upper():
       var_numerator    = src_data.variables['Et'][process_time]
@@ -238,72 +276,190 @@ def read_cal_metrics(model_name, data_file_name, mask_file_name, masks, metrics,
       var_numerator   = src_data.variables['transpiration'][process_time]
       var_denominator = src_data.variables['transpiration'][process_time] + src_data.variables['evaporation_canopy'][process_time]
       var_denominator += src_data.variables['evaporation_soil'][process_time]
+
+# transpiration_era5land: Transpiration Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif metrics == 'transpiration_era5land':
+    if 'era5land' in model_name:
+      var_numerator    = src_data.variables['etran'][process_time]
+    else:
+      var_numerator    = src_data.variables['transpiration'][process_time]
+      var_numerator    *=  86400.0 * days_in_month[process_time]
+    var_denominator  = np.full(len(var_numerator), 1.0)
+
+# canopy_evaporation_era5land: Canopy Evaporation Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif metrics == 'canopy_evaporation_era5land':
+    if 'era5land' in model_name:
+      var_numerator    = src_data.variables['ecan'][process_time]
+    else:
+      var_numerator    = src_data.variables['evaporation_canopy'][process_time]
+      var_numerator    *=  86400.0 * days_in_month[process_time]
+    var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_evaporation_era5land: Soil Evaporation Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif metrics == 'soil_evaporation_era5land':
+    if 'era5land' in model_name:
+      var_numerator    = src_data.variables['esoil'][process_time]
+    else:
+      var_numerator    = src_data.variables['evaporation_soil'][process_time]
+      var_numerator    *=  86400.0 * days_in_month[process_time]
+    var_denominator  = np.full(len(var_numerator), 1.0)
+
+# latent_heat_flux_era5land: Latent Heat Flux Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif metrics == 'latent_heat_flux_era5land':
+    if 'era5land' in model_name:
+      var_numerator    = src_data.variables['lhf'][process_time]
+    else:
+      var_numerator    = src_data.variables['latent_heat_total'][process_time]
+    var_denominator  = np.full(len(var_numerator), 1.0)
+
+# sensible_heat_flux_era5land: Sensible Heat Flux Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif metrics == 'sensible_heat_flux_era5land':
+    if 'era5land' in model_name:
+      var_numerator    = src_data.variables['shf'][process_time]
+    else:
+      var_numerator    = src_data.variables['sensible_heat_total'][process_time]
+    var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_moisture_level1_era5land: Level 1 Soil Moisture Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif metrics == 'soil_moisture_level1_era5land':
+    if 'era5land' in model_name:
+      var_numerator    = src_data.variables['smc1'][process_time]
+    else:
+      var_numerator    = src_data.variables['soil_moisture_vol'][process_time][0]
+    var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_moisture_level2_era5land: Level 2 Soil Moisture Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif metrics == 'soil_moisture_level2_era5land':
+    if 'era5land' in model_name:
+      var_numerator    = src_data.variables['smc2'][process_time]
+    else:
+      var_numerator    = src_data.variables['soil_moisture_vol'][process_time][1]
+    var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_moisture_level3_era5land: Level 3 Soil Moisture Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif metrics == 'soil_moisture_level3_era5land':
+    if 'era5land' in model_name:
+      var_numerator    = src_data.variables['smc3'][process_time]
+    else:
+      var_numerator    = src_data.variables['soil_moisture_vol'][process_time][2]
+    var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_moisture_level4_era5land: Level 4 Soil Moisture Compared to ERA5-Land (monthly mean climatology 2015-2024)
+
+  elif metrics == 'soil_moisture_level4_era5land':
+    if 'era5land' in model_name:
+      var_numerator    = src_data.variables['smc4'][process_time]
+    else:
+      var_numerator    = src_data.variables['soil_moisture_vol'][process_time][3]
+    var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_temperature_level1_gfsref: Level 1 Soil Temperature Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'soil_temperature_level1_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['soil_temperature_level1'][process_time]
     else:
       var_numerator   = src_data.variables['temperature_soil'][process_time][0]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_temperature_level2_gfsref: Level 2 Soil Temperature Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'soil_temperature_level2_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['soil_temperature_level2'][process_time]
     else:
       var_numerator   = src_data.variables['temperature_soil'][process_time][1]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_temperature_level3_gfsref: Level 3 Soil Temperature Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'soil_temperature_level3_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['soil_temperature_level3'][process_time]
     else:
       var_numerator   = src_data.variables['temperature_soil'][process_time][2]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_temperature_level4_gfsref: Level 4 Soil Temperature Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'soil_temperature_level4_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['soil_temperature_level4'][process_time]
     else:
       var_numerator   = src_data.variables['temperature_soil'][process_time][3]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_moisture_level1_gfsref: Level 1 Soil Moisture Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'soil_moisture_level1_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['soil_water_level1'][process_time]
     else:
       var_numerator    = src_data.variables['soil_moisture_vol'][process_time][0]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_moisture_level2_gfsref: Level 2 Soil Moisture Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'soil_moisture_level2_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['soil_water_level2'][process_time]
     else:
       var_numerator    = src_data.variables['soil_moisture_vol'][process_time][1]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_moisture_level3_gfsref: Level 3 Soil Moisture Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'soil_moisture_level3_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['soil_water_level3'][process_time]
     else:
       var_numerator    = src_data.variables['soil_moisture_vol'][process_time][2]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# soil_moisture_level4_gfsref: Level 4 Soil Moisture Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'soil_moisture_level4_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['soil_water_level4'][process_time]
     else:
       var_numerator    = src_data.variables['soil_moisture_vol'][process_time][3]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# latent_heat_flux_gfsref: Latent Heat Flux Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'latent_heat_flux_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['latent_heat_flux'][process_time]
     else:
       var_numerator    = src_data.variables['latent_heat_total'][process_time]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# sensible_heat_flux_gfsref: Sensible Heat Flux Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'sensible_heat_flux_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['sensible_heat_flux'][process_time]
     else:
       var_numerator    = src_data.variables['sensible_heat_total'][process_time]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
+# ground_heat_flux_gfsref: Ground Heat Flux Compared to GFS Reference (monthly mean 2024-04 to 2026-02)
+
   elif metrics == 'ground_heat_flux_gfsref':
     if 'v17retro' in model_name or 'v16ref' in model_name:
       var_numerator    = src_data.variables['ground_heat_flux'][process_time]
     else:
       var_numerator    = src_data.variables['ground_heat_total'][process_time]
     var_denominator  = np.full(len(var_numerator), 1.0)
+
   else:
     print("Metrics: ",metrics.upper())
     sys.exit("Error: not implemented metrics")
@@ -359,10 +515,34 @@ def plot_timeseries(time, metric_mask, masks, models, metrics, output_file_name,
     defaultStyles = np.array(['-'    ,'-'  ,'-'   ,':'   ])
     metric_mask = metric_mask * 100.0
     plot_units = "%"
+  elif (metrics == 'soil_evaporation_era5land'   or 
+        metrics == 'transpiration_era5land'      or 
+        metrics == 'canopy_evaporation_era5land' ):
+    defaultColors = np.array(['black','red','blue'])
+    defaultStyles = np.array(['-'    ,'-'  ,'-'   ])
+    ymin = -50.0
+    ymax = 100.0
+    plot_units = "mm"
+  elif (metrics == 'sensible_heat_flux_era5land'):
+    defaultColors = np.array(['black','red','blue'])
+    defaultStyles = np.array(['-'    ,'-'  ,'-'   ])
+    ymin = -50.0
+    ymax = 150.0
+    plot_units = "W/m2"
+  elif (metrics == 'latent_heat_flux_era5land'):
+    defaultColors = np.array(['black','red','blue'])
+    defaultStyles = np.array(['-'    ,'-'  ,'-'   ])
+    ymin = 0.0
+    ymax = 200.0
+    plot_units = "W/m2"
   elif (metrics == 'soil_moisture_level1_gfsref' or 
         metrics == 'soil_moisture_level2_gfsref' or 
         metrics == 'soil_moisture_level3_gfsref' or 
-        metrics == 'soil_moisture_level4_gfsref'):
+        metrics == 'soil_moisture_level4_gfsref' or
+        metrics == 'soil_moisture_level1_era5land' or 
+        metrics == 'soil_moisture_level2_era5land' or 
+        metrics == 'soil_moisture_level3_era5land' or 
+        metrics == 'soil_moisture_level4_era5land'):
     defaultColors = np.array(['black','red','blue','green','blue','green'])
     defaultStyles = np.array(['-'    ,'-'  ,'-'   ,'-'    ,':'   ,':'  ])
     ymin = 0.0
